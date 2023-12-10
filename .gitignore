@@ -45,3 +45,6 @@ Thumbs.db
 
 .env
 build/
+*.db
+migrations/
+/uploads/*

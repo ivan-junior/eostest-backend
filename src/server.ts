@@ -1,11 +1,6 @@
-import express, { Request, Response } from 'express'
-
-const app = express()
-
-app.get('/', (req: Request, res: Response) => {
-    res.json({ hello: 'world' })
-})
+import './routes'
+import app from './express'
 
 app.listen(process.env.PORT || 3333, () => {
-    console.log(`Server listening`)
+	console.log(`Server listening`)
 })
