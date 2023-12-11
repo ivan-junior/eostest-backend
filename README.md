@@ -10,6 +10,7 @@ Para rodar o projeto em localhost, siga as instruções abaixo
 - No terminal, execute os comandos ``npm install``, ``npx prisma migrate dev`` e depois ``npm run dev``
 - Se tudo ocorrer bem, você verá ``Server listening`` no terminal
 - O servidor estará escutando na url http://localhost:3333
+- Acesse o prisma studio para visualizar os registros do banco de dados se precisar: no terminal, execute o comando ``npx prisma studio``
 
 ## Descrição das Libs/Framework
 - Node.js versão 18.18 com TypeScript versão 5
