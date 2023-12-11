@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { generateToken } from '../utils'
+import sendEmail from '../sendEmail'
 
 export const createUser = async (req: Request, res: Response) => {
 	try {
@@ -22,12 +23,12 @@ export const createUser = async (req: Request, res: Response) => {
 		})
 
 		if (isUserRegistered) {
-			return res.status(400).json({ error: 'Usuário já está cadastrado com este endereço de email' })
+			return res.status(400).json({ error: 'Já existe um usuário cadastrado com este endereço de email' })
 		}
 
 		const hash = await bcrypt.hash(password, 10)
 
-		await prisma.user.create({
+		const createdUser = await prisma.user.create({
 			data: {
 				name,
 				email,
@@ -36,7 +37,13 @@ export const createUser = async (req: Request, res: Response) => {
 			}
 		})
 
-		return res.status(201).end()
+		sendEmail({
+			to: 'cd907c7bb9-2b9ce6@inbox.mailtrap.io', //email fixo apenas para fins de testes
+			subject: 'Bem-vindo ao nosso magnífico teste',
+			htmlBody: `<p>Olá, ${name}</p><p>Vi que criou um usuário em nosso site. Muito obrigado! Não esqueça de acessar o feed de postagens!</p><p>Atenciosamente,<br />Ivan.</p>`
+		})
+
+		return res.status(201).json({ success: true, ...createdUser })
 	} catch (error) {
 		console.error(error)
 		return res.status(400).json({ error: 'Não possível criar o usuário. Por favor, tente novamente mais tarde' })
@@ -68,6 +75,7 @@ export const getUserById = async (req: Request, res: Response) => {
 		const prisma = new PrismaClient()
 		const user = await prisma.user.findUnique({
 			select: {
+				id: true,
 				name: true,
 				email: true,
 				profile: true,
@@ -101,18 +109,28 @@ export const updateUser = async (req: Request, res: Response) => {
 		const prisma = new PrismaClient()
 		const schema = z.object({
 			name: z.string(),
-			email: z.string().email()
+			email: z.string().email(),
+			profile: z.string(),
+			password: z.string().optional()
 		})
-		const { name, email } = schema.parse(req.body)
+		const data = schema.parse(req.body)
+		const dataToUpdate: { name: string; email: string; profile: string; password?: string } = {
+			name: data.name,
+			email: data.email,
+			profile: data.profile
+		}
+		if (data.password) {
+			const hash = await bcrypt.hash(data.password, 10)
+			dataToUpdate.password = hash
+		}
+
 		const user = await prisma.user.update({
 			where: {
 				id: req.params.id
 			},
-			data: {
-				name,
-				email
-			},
+			data: dataToUpdate,
 			select: {
+				id: true,
 				name: true,
 				email: true,
 				profile: true,
@@ -124,6 +142,7 @@ export const updateUser = async (req: Request, res: Response) => {
 		if (!user) {
 			return res.status(404).json({ error: 'Não foi possível editar o usuário' })
 		}
+
 		return res.status(200).json(user)
 	} catch (error) {
 		console.error(error)

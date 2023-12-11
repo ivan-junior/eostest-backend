@@ -11,7 +11,7 @@ Você pode utilizar a url enviada via email para testar o projeto publicado. E p
 - Happy coding!
 
 ## Descrição das Libs/Framework
-- Node.js com TypeScript
+- Node.js versão 18.18 com TypeScript versão 5
 - ESLint com Prettier
 - [tsup](https://github.com/egoist/tsup)
 - [tsx](https://github.com/esbuild-kit/tsx)
@@ -19,8 +19,15 @@ Você pode utilizar a url enviada via email para testar o projeto publicado. E p
 - bcrypt - para criptografar a senha
 - dayjs - para lidar com formatação de datas
 - jsonwebtoken - para lidar com tokens jwt
-- multer e mime-types - para lidar com arquivos como a thumbnail do post
-- Banco de dados: SQLite com o Prisma de ORM
+- multer e mime-types - para lidar com arquivos como a thumbnail/imagem do post
+- Nodemailer - para lidar com envios de email, e para isso foi usado o Mailtrap
+- Banco de dados: SQLite com o Prisma como ORM
+
+Para entrar no Mailtrap e ver o envio de emails funcionando, acesse o Mailtrap com essas credenciais:
+
+- Email: ivanbjunior.93+eos@gmail.com
+- Senha: EOS@6QvMfyNvy2
+- Link de acesso: [https://mailtrap.io/signin](https://mailtrap.io/signin)
 
 ### Requisitos Funcionais
 - O usuário deve poder fazer o login

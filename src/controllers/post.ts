@@ -16,7 +16,8 @@ export const createPost = async (req: Request, res: Response) => {
 			data: {
 				title,
 				description,
-				thumbnailUrl: `${process.env.URL}/public/posts/${req.file?.filename}`,
+				thumbnailUrl:
+					req.file && req.file.filename ? `${process.env.URL}/public/posts/${req.file.filename}` : undefined,
 				userId: req.userId
 			}
 		})
@@ -51,17 +52,37 @@ export const editPost = async (req: Request, res: Response) => {
 		}
 
 		const schema = z.object({
-			title: z.string(),
 			description: z.string()
 		})
-		const { title, description } = schema.parse(req.body)
+		const { description } = schema.parse(req.body)
 		const postEdited = await prisma.post.update({
 			where: {
 				id: postId
 			},
 			data: {
-				title,
 				description
+			},
+			include: {
+				commentaries: {
+					orderBy: {
+						createdAt: 'desc'
+					},
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true
+							}
+						}
+					}
+				},
+				metadata: true,
+				user: {
+					select: {
+						id: true,
+						name: true
+					}
+				}
 			}
 		})
 
@@ -88,8 +109,29 @@ export const getPosts = async (req: Request, res: Response) => {
 		const prisma = new PrismaClient()
 		const posts = await prisma.post.findMany({
 			include: {
-				commentaries: true,
-				metadata: true
+				commentaries: {
+					orderBy: {
+						createdAt: 'desc'
+					},
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true
+							}
+						}
+					}
+				},
+				metadata: true,
+				user: {
+					select: {
+						id: true,
+						name: true
+					}
+				}
+			},
+			orderBy: {
+				createdAt: 'desc'
 			}
 		})
 		return res.status(200).json(posts)
@@ -176,20 +218,10 @@ export const deletePost = async (req: Request, res: Response) => {
 				id: postId
 			}
 		})
-		await prisma.postMetadata.delete({
-			where: {
-				postId
-			}
-		})
-		await prisma.postHistory.deleteMany({
-			where: {
-				postId
-			}
-		})
 		return res.status(200).json({ success: true })
 	} catch (error) {
 		console.error(error)
-		return res.status(400).json({ error: 'Não possível buscar os usuários. Por favor, tente novamente mais tarde' })
+		return res.status(400).json({ error: 'Não possível deletar o post. Por favor, tente novamente mais tarde' })
 	}
 }
 
@@ -207,7 +239,8 @@ export const updateLikeCountOnPost = async (req: Request, res: Response) => {
 				postId: postId
 			},
 			data: {
-				likeCount: postMetadata.likeCount + 1
+				likeCount: postMetadata.likeCount + 1,
+				dislikeCount: postMetadata.dislikeCount == 0 ? 0 : postMetadata.dislikeCount - 1
 			}
 		})
 		return res.status(200).json(updatedPostMetadata)
@@ -231,7 +264,8 @@ export const updateDislikeCountOnPost = async (req: Request, res: Response) => {
 				postId: postId
 			},
 			data: {
-				dislikeCount: postMetadata.dislikeCount + 1
+				dislikeCount: postMetadata.dislikeCount + 1,
+				likeCount: postMetadata.likeCount == 0 ? 0 : postMetadata.likeCount - 1
 			}
 		})
 		return res.status(200).json(updatedPostMetadata)

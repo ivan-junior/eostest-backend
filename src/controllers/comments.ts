@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import { z } from 'zod'
 import { PrismaClient } from '@prisma/client'
+import sendEmail from '../sendEmail'
 
 export const createCommentary = async (req: Request, res: Response) => {
 	try {
@@ -18,7 +19,30 @@ export const createCommentary = async (req: Request, res: Response) => {
 				description,
 				userId,
 				postId
+			},
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true
+					}
+				}
 			}
+		})
+
+		const postAuthor = await prisma.post.findUnique({
+			where: {
+				id: postId
+			},
+			include: {
+				user: true
+			}
+		})
+
+		sendEmail({
+			to: postAuthor.user.email,
+			subject: 'Novo comentário em seu post',
+			htmlBody: `<p>Um novo comentário foi adicionado no post ${postAuthor.title}</p><p>${commentary.description}</p>`
 		})
 		return res.status(201).json(commentary)
 	} catch (error) {
@@ -55,6 +79,14 @@ export const editCommentary = async (req: Request, res: Response) => {
 			},
 			data: {
 				description
+			},
+			include: {
+				user: {
+					select: {
+						id: true,
+						name: true
+					}
+				}
 			}
 		})
 
@@ -68,6 +100,7 @@ export const editCommentary = async (req: Request, res: Response) => {
 		if (!commentaryEdited) {
 			return res.status(400).json({ error: 'Não foi possível editar o comentário' })
 		}
+
 		return res.status(200).json(commentaryEdited)
 	} catch (error) {
 		console.error(error)
