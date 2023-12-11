@@ -4,11 +4,12 @@ Backend do Teste da EOS
 
 ## Instruções
 
-Você pode utilizar a url enviada via email para testar o projeto publicado. E para rodar em localhost, siga as instruções abaixo
+Para rodar o projeto em localhost, siga as instruções abaixo
 
 - Clone o reporitório
-- No terminal, rode ``npm install`` e depois ``npm run dev``
-- Happy coding!
+- No terminal, execute os comandos ``npm install``, ``npx prisma migrate dev`` e depois ``npm run dev``
+- Se tudo ocorrer bem, você verá ``Server listening`` no terminal
+- O servidor estará escutando na url http://localhost:3333
 
 ## Descrição das Libs/Framework
 - Node.js versão 18.18 com TypeScript versão 5
@@ -23,7 +24,7 @@ Você pode utilizar a url enviada via email para testar o projeto publicado. E p
 - Nodemailer - para lidar com envios de email, e para isso foi usado o Mailtrap
 - Banco de dados: SQLite com o Prisma como ORM
 
-Para entrar no Mailtrap e ver o envio de emails funcionando, acesse o Mailtrap com essas credenciais:
+Para ver o envio de emails funcionando, acesse o Mailtrap com essas credenciais:
 
 - Email: ivanbjunior.93+eos@gmail.com
 - Senha: EOS@6QvMfyNvy2
