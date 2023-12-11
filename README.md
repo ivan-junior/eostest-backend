@@ -26,8 +26,8 @@ Obs.: variáveis expostas somente para fins deste teste
 ## Descrição das Libs/Framework
 - Node.js versão 18.18 com TypeScript versão 5
 - ESLint com Prettier
-- [tsup](https://github.com/egoist/tsup)
-- [tsx](https://github.com/esbuild-kit/tsx)
+- [tsup](https://github.com/egoist/tsup) - para fazer o build
+- [tsx](https://github.com/esbuild-kit/tsx) - para executar arquivos TS sem precisar do build
 - express - para lidar com as rotas
 - bcrypt - para criptografar a senha
 - dayjs - para lidar com formatação de datas
