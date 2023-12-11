@@ -7,10 +7,21 @@ Backend do Teste da EOS
 Para rodar o projeto em localhost, siga as instruções abaixo
 
 - Clone o reporitório
-- No terminal, execute os comandos ``npm install``, ``npx prisma migrate dev`` e depois ``npm run dev``
+- No terminal, execute os comandos ``npm install``. 
+- Em seguida, crie um arquivo ``.env`` com as seguintes variáveis de ambiente:
+- DATABASE_URL="file:./dev.db"
+- URL=http://localhost:3333
+- SMTP_HOST=sandbox.smtp.mailtrap.io
+- SMTP_PORT=2525
+- SMTP_USERNAME=51598eb7e03f77
+- SMTP_PASSWORD=89868e6cef9e30
+- Em seguida, execute o comando ``npx prisma migrate dev``, insira um nome para a migration (pode ser qualquer nome)
+- Por último, execute ``npm run dev``
 - Se tudo ocorrer bem, você verá ``Server listening`` no terminal
 - O servidor estará escutando na url http://localhost:3333
 - Acesse o prisma studio para visualizar os registros do banco de dados se precisar: no terminal, execute o comando ``npx prisma studio``
+
+Obs.: variáveis expostas somente para fins deste teste
 
 ## Descrição das Libs/Framework
 - Node.js versão 18.18 com TypeScript versão 5
